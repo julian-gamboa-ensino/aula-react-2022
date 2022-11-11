@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Work+Sans&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  place-items: center;
+  background: #000;
+  font-family: "Work Sans", sans-serif;
+  color: #fff;
+}
+
+#backgroundCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.content {
+  width: 80vw;
+  border: 1px solid #fff;
+  padding: 10% 6%;
+  border-radius: 25px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+p {
+  line-height: 2;
+}
+</style>
+
+<script>
+    const colors = ['#be1d90', '#4b0487', '#42707d', '#000000'];
+const bgCanvas = document.getElementById('backgroundCanvas');
+const ctx = bgCanvas.getContext('2d');
+const amt = window.innerWidth < 1000 ? 10 : 40;
+  
+// return a random number within a range
+function getRandomNum(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// map a number from 1 range to another
+function map(n, start1, end1, start2, end2) {
+  return ((n - start1) / (end1 - start1)) * (end2 - start2) + start2;
+}
+
+function radians($degrees){
+    return ($degrees * Math.PI)/ 180;
+}
+// Given the origin point of the circle, its radius and the angle in Radians (degrees * Math.PI / 180)
+// it returns the a point object showing the x,y coordinates of the point on a circle.
+
+function findPointOnCircle(originX, originY , radius, degrees) {
+    let angleRadians =  radians(degrees);
+    var newX = radius * Math.cos(angleRadians) + originX
+    var newY = radius * Math.sin(angleRadians) + originY
+
+    return {"x" : newX, "y" : newY}
+}
+
+const minWidth = 30;
+const maxWidth = 300;
+const shapes = [];
+
+function drawShapes($amount){
+  for(var i = 0; i<$amount; i++) {      
+    shapes.push(new Circle(ctx, colors[Math.trunc(getRandomNum(0, colors.length))]));
+  }
+}
+
+class Circle {
+  constructor (ctx, color) {
+    this.size = Math.round(getRandomNum(minWidth, maxWidth));
+    this.offset = Math.round(getRandomNum(-1, 1));
+    this.color = color;
+    this.context = ctx;
+    this.x = getRandomNum(0, window.innerWidth);
+    this.y = getRandomNum(0, window.innerHeight);
+    this.make(this.size);
+  }
+  make ($radius) {
+    this.context.beginPath();
+    this.context.fillStyle = this.color;
+    this.context.arc(this.x, this.y, $radius, radians(0), radians(360));
+    this.context.closePath();
+    this.context.fill();
+  }
+  update ($multiplier) {
+    const m = $multiplier * this.offset;
+    this.make((Math.round(this.size * m) + this.size));
+  }
+}
+bgCanvas.width = innerWidth;
+bgCanvas.height = innerHeight;
+drawShapes(amt);
+ctx.filter = 'blur(50px)';
+
+const updateCircles = (m) => {
+  ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  for (let i=0; i<shapes.length; i++){
+    shapes[i].update(m);
+  }
+}
+
+const updatePoint = () => {
+  const d = Date.now();
+  let point = Math.sin(d * .0001).toFixed(3);
+  let converted = Math.abs(parseFloat(point));
+  updateCircles(converted);
+  
+  setTimeout(() => {
+    window.requestAnimationFrame(updatePoint);
+  }, 20)
+}
+window.requestAnimationFrame(updatePoint);
+
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+<div class="content">
+  <h1>This background changes slowly over time.</h1>
+  <p>It uses canvas drawing and vanillaJS to create a generative background which will morph as time passes based on the good old fashioned sine wave.</p>
+</div>
+
+</body>
+</html>
