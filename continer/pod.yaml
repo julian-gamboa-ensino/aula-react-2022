@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-giropops
+  name: nginx-giropops
+spec:
+  selector:
+    matchLabels:
+      app: nginx-giropops
+  template:
+    metadata:
+      labels:
+        app: nginx-giropops
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources:
+          limits:
+            memory: 44Mi
+            cpu: 0.5
+          requests:
+            memory: 44Mi
+            cpu: 0.3
+        ports:
+        - containerPort: 80
+      dnsPolicy: ClusterFirst
+  #restartPolicy: Always
