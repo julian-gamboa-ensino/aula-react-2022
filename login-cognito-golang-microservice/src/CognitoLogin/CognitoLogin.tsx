@@ -11,42 +11,42 @@ Amplify.configure(awsconfig);
 async function currentSession() {
     try {
         const { tokens } = await fetchAuthSession({ forceRefresh: true });
-        console.log(tokens?.accessToken.toString());
+
+        if (tokens!) {
+            console.log(tokens?.accessToken.toString());
+        } else {
+            console.log("TOKEN is NULL");
+        }
     } catch (err) {
         console.log(err);
     }
 }
 
-
 const CognitoLogin = () => {
 
-    const [apiData, setApiData] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-
-            try {
-                const response = await fetch('http://localhost:3000/bootcamps');
-                const data = await response.json();
-                setApiData(data);
-            } catch (error) {
-                console.error('Erro ao buscar dados da API:', error);
-            }
-
-        };
-
-        fetchData();
         currentSession();
-    }, []);
+    }, []); // Esse useEffect roda apenas uma vez, quando o componente é montado
+
 
     return (
         <Authenticator>
             {({ signOut, user }) => {
+                // Atualiza o estado 'currentUser' sempre que o 'user' mudar
+
+                if (user) {
+                    console.log("Usuário logado   "+user.username);
+                }
+                else {
+                    console.log("Usuário deslogado ");
+                }
+
+
 
                 return user ? (
                     <div>
                         <h1>Olá, {user.username}</h1>
-                        {apiData && <pre>{JSON.stringify(apiData, null, 2)}</pre>}
                         <button onClick={signOut}>Sair</button>
                     </div>
                 ) : (
