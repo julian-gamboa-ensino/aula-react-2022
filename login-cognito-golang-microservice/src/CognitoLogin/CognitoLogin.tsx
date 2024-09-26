@@ -4,7 +4,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css'
 import awsconfig from '../../aws-exports';
 
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { fetchAuthSession, getCurrentUser } from 'aws-amplify/auth';
 
 Amplify.configure(awsconfig);
 
@@ -24,11 +24,14 @@ async function currentSession() {
 
 const CognitoLogin = () => {
 
+    var CurrentUser="";
+
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     useEffect(() => {
-        currentSession();
-    }, []); // Esse useEffect roda apenas uma vez, quando o componente é montado
+        //currentSession();
+        console.log("useEffect "+"  CurrentUser:  "+CurrentUser+ "  isLoggingOut: "+isLoggingOut);
+    }, [CurrentUser]); 
 
 
     return (
@@ -38,8 +41,10 @@ const CognitoLogin = () => {
 
                 if (user && !isLoggingOut) {
                     setIsLoggingOut(false);
-                    console.log("Usuário logado: " + user.username+"  set IsLoggingOut: "+isLoggingOut);
+                    CurrentUser=user.username;
+                    console.log("Usuário logado: " + user.username+"  set IsLoggingOut: "+isLoggingOut+"  CurrentUser:  "+CurrentUser);
                 } else if (isLoggingOut) {
+                    console.log("Usuário deslogado: "+"  CurrentUser:  "+CurrentUser);
                     console.log("Usuário deslogado");
                 }
 
