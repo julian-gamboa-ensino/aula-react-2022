@@ -6,7 +6,11 @@ function App() {
 
   return (
     <>
-      <CognitoLogin />
+    Aula sobre 
+    
+    <b>"Microserviço Cognito Login"</b>
+    <CognitoLogin />
+    
     </>
   )
 }
