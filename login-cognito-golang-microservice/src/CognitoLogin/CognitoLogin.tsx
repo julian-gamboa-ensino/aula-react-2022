@@ -24,6 +24,7 @@ async function currentSession() {
 
 const CognitoLogin = () => {
 
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     useEffect(() => {
         currentSession();
@@ -35,19 +36,27 @@ const CognitoLogin = () => {
             {({ signOut, user }) => {
                 // Atualiza o estado 'currentUser' sempre que o 'user' mudar
 
-                if (user) {
-                    console.log("Usuário logado   "+user.username);
-                }
-                else {
-                    console.log("Usuário deslogado ");
+                if (user && !isLoggingOut) {
+                    setIsLoggingOut(false);
+                    console.log("Usuário logado: " + user.username+"  set IsLoggingOut: "+isLoggingOut);
+                } else if (isLoggingOut) {
+                    console.log("Usuário deslogado");
                 }
 
-
+                const handleSignOut = () => {
+                    setIsLoggingOut(true);
+                    // Certifica-se de que 'signOut' está definido antes de chamar
+                    if (typeof signOut === 'function') {
+                        signOut();
+                    } else {
+                        console.error("signOut não está definido");
+                    }
+                }
 
                 return user ? (
                     <div>
                         <h1>Olá, {user.username}</h1>
-                        <button onClick={signOut}>Sair</button>
+                        <button onClick={handleSignOut}>Sair</button>
                     </div>
                 ) : (
                     <div>Faça login para continuar</div>
