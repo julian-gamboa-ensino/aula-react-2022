@@ -27,8 +27,13 @@ const CognitoLogin = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
+    if((currentUser !== "") && !isLoggingOut)
+    {
+        console.log(" Usando API  "+currentUser)
+        currentSession();
+    }
     console.log("useEffect CurrentUser: " + currentUser + " isLoggingOut: " + isLoggingOut);
-  }, [currentUser, isLoggingOut]); // Certifique-se de incluir 'isLoggingOut' aqui
+  }, [currentUser]); // Certifique-se de incluir 'isLoggingOut' aqui
 
   return (
     <Authenticator>
